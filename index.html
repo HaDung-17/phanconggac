@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<!-- =========================================================
+     CẤU HÌNH LOGO / PWA
+     DÁN LINK ẢNH LOGO CỦA ĐƠN VỊ VÀO LOGO_URL.
+     Khuyến nghị ảnh PNG/JPG vuông, tối thiểu 512x512 px.
+     Ví dụ: https://ten-mien-cua-anh.vn/logo.png
+     ========================================================= -->
+<script>
+  const LOGO_URL = "https://lh3.googleusercontent.com/d/1Tf9hw8KBoqT38-RJ2gkDveFGWAf9de2-"; // <-- DÁN LINK LOGO TẠI ĐÂY
+  const APP_NAME = "PHÒNG THAM MƯU - CẮT GÁC";
+  const APP_SHORT_NAME = "CẮT GÁC";
+
+  // Tự cập nhật icon trên trình duyệt từ LOGO_URL.
+  document.write('<link rel="icon" type="image/png" href="' + LOGO_URL + '">');
+  document.write('<link rel="apple-touch-icon" href="' + LOGO_URL + '">');
+</script>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#355e3b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CẮT GÁC">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PHÒNG THAM MƯU - DANH SÁCH PHÂN CÔNG GÁC</title>
+<style>
+:root{--green:#173d2b;--green2:#24583d;--green3:#102b20;--red:#b51f2a;--gold:#f1c84b;--bg:#eef1ec;--card:#fff;--line:#cbd5ce;--text:#17231c}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#e7ece7,#f7f8f6);color:var(--text)}
+header{background:linear-gradient(135deg,var(--green3),var(--green));color:#fff;padding:20px;text-align:center;border-bottom:5px solid var(--red);position:relative}
+header:before{content:"★";position:absolute;left:24px;top:14px;font-size:42px;color:var(--gold)}
+header:after{content:"★";position:absolute;right:24px;top:14px;font-size:42px;color:var(--gold)}
+h1{margin:0;font-size:30px;letter-spacing:1px}.subtitle{font-size:20px;font-weight:bold;margin-top:7px}.badge{margin-top:8px;color:#ffe78a;font-size:13px}
+main{max-width:1500px;margin:auto;padding:18px}.toolbar,.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 15px #173d2b18;margin-bottom:16px}
+.toolbar{padding:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}.toolbar input,.toolbar select,.toolbar button,.panel input,.panel select,.panel button{font:inherit}
+button{border:0;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer}.primary{background:var(--green);color:white}.danger{background:var(--red);color:white}.secondary{background:#dfe7e1;color:var(--green3)}.gold{background:var(--gold);color:#382900}
+.datebox{margin-left:auto;display:flex;gap:8px;align-items:center}.datebox input{padding:9px;border:1px solid var(--line);border-radius:7px}
+.panel h2{margin:0;padding:13px 16px;background:var(--green);color:white;border-radius:12px 12px 0 0;font-size:18px}
+.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:1100px}.table th,.table td{border:1px solid var(--line);padding:7px 6px;text-align:center;vertical-align:middle}.table th{background:#dfe8e1;color:var(--green3);font-size:13px}.table td.name{text-align:left;font-weight:bold;white-space:nowrap}.table td.rank{white-space:nowrap}.table td.ban{white-space:nowrap}
+.smallcheck{display:flex;justify-content:center;align-items:center;min-width:82px}.smallcheck label{font-size:11px;line-height:1.1;cursor:pointer}.smallcheck input{width:16px;height:16px;accent-color:var(--green)}
+.actionrow{padding:12px;display:flex;gap:8px;flex-wrap:wrap}
+.status{font-size:12px;color:#526258}.rules{padding:15px;line-height:1.55;font-size:13px}.rules strong{color:var(--green)}
+#login{position:fixed;inset:0;background:linear-gradient(135deg,#0b2118,#173d2b);display:flex;align-items:center;justify-content:center;z-index:1000}
+.loginbox{width:min(400px,92vw);background:#fff;border-radius:16px;padding:28px;box-shadow:0 20px 60px #0008;text-align:center;border-top:7px solid var(--red)}.star{font-size:48px;color:var(--gold)}.loginbox h2{color:var(--green);margin:4px 0 18px}.loginbox input{width:100%;padding:12px;margin:6px 0;border:1px solid #c8d0ca;border-radius:8px}.loginbox button{width:100%;margin-top:10px}
+#app{display:none}
+.result{display:none}.result .datehead{text-align:center;padding:12px;font-weight:bold;font-size:17px}.result table{min-width:760px}.result th{background:var(--green);color:#fff}.result .note{font-size:12px;font-weight:bold;color:#9a1821}.result .absent input{width:20px;height:20px;accent-color:var(--red)}
+.notice{padding:10px 14px;background:#fff7d6;border-left:4px solid var(--gold);margin:10px 0;border-radius:5px;font-size:13px}
+.modal{display:none;position:fixed;inset:0;background:#0007;z-index:900;align-items:center;justify-content:center}.modalbox{background:white;width:min(620px,94vw);max-height:90vh;overflow:auto;border-radius:12px;padding:18px}.modalbox h3{margin-top:0;color:var(--green)}.modalbox label{display:block;margin:8px 0 4px;font-weight:bold}.modalbox input,.modalbox select{width:100%;padding:10px;border:1px solid var(--line);border-radius:7px}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}
+@media(max-width:700px){h1{font-size:22px}.subtitle{font-size:16px}header:before,header:after{display:none}.datebox{margin-left:0}}
+@media print{#login,.toolbar,.actionrow,.notice,.rules,.no-print{display:none!important}body{background:#fff}main{padding:0}.panel{box-shadow:none;border:0}.result{display:block!important}.result h2{background:#fff;color:#000;border:0;text-align:center}.result .datehead{font-size:16px}}
+</style>
+</head>
+<body>
+<div id="login">
+  <div class="loginbox">
+    <div class="star">★</div>
+    <h2>PHÒNG THAM MƯU</h2>
+    <div style="font-weight:bold;margin-bottom:8px">HỆ THỐNG CẮT GÁC HÀNG NGÀY</div>
+
+    <div id="loginView">
+      <input id="user" placeholder="Tên đăng nhập" autocomplete="username">
+      <input id="pass" type="password" placeholder="Mật khẩu" autocomplete="current-password">
+      <button class="primary" onclick="login()">ĐĂNG NHẬP</button>
+      <button class="secondary" onclick="showRegister()" style="margin-top:8px">TẠO TÀI KHOẢN</button>
+      <div id="loginmsg" style="color:#b51f2a;margin-top:8px;font-size:13px"></div>
+    </div>
+
+    <div id="registerbox" style="display:none;margin-top:14px;border-top:1px solid #ddd;padding-top:14px">
+      <div style="font-size:18px;font-weight:bold;color:var(--green);margin-bottom:8px">ĐĂNG KÝ TÀI KHOẢN MỚI</div>
+      <input id="regname" placeholder="Họ và tên *" autocomplete="name">
+      <input id="reguser" placeholder="Tên tài khoản mới *" autocomplete="username">
+      <input id="regpass" type="password" placeholder="Mật khẩu mới (tối thiểu 6 ký tự) *" autocomplete="new-password">
+      <input id="regpass2" type="password" placeholder="Nhập lại mật khẩu *" autocomplete="new-password">
+      <button class="primary" onclick="registerUser()">ĐĂNG KÝ</button>
+      <button class="secondary" onclick="hideRegister()" style="margin-top:6px">QUAY LẠI ĐĂNG NHẬP</button>
+      <div id="regmsg" style="margin-top:8px;font-size:13px"></div>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+<header>
+  <h1>PHÒNG THAM MƯU</h1>
+  <div class="subtitle">DANH SÁCH PHÂN CÔNG GÁC</div>
+  <div class="badge">HỆ THỐNG QUẢN LÝ VÀ CẮT GÁC HÀNG NGÀY</div>
+</header>
+<main>
+  <div class="toolbar">
+    <button class="primary" onclick="cutGuard()">CẮT GÁC</button>
+    <button class="secondary" onclick="addPerson()">＋ THÊM QUÂN NHÂN</button>
+    <button class="secondary" onclick="saveData()">LƯU DỮ LIỆU</button>
+    <button class="secondary" onclick="loadData()">NẠP DỮ LIỆU</button>
+    <button class="secondary" onclick="printResult()">IN DANH SÁCH</button>
+    <button class="secondary" onclick="showHistory()">LỊCH SỬ 5 NGÀY</button>
+    <button id="adminUsersBtn" class="secondary" onclick="showAdminUsers()" style="display:none">QUẢN LÝ TÀI KHOẢN</button>
+    <button class="danger" onclick="logout()">ĐĂNG XUẤT</button>
+    <div class="datebox"><b>Ngày cắt:</b><input type="date" id="workDate"></div>
+  </div>
+
+  <div class="notice">Đánh dấu trạng thái trước khi bấm <b>CẮT GÁC</b>. Các ô “Lái xe” chỉ xuất hiện với CN Đinh Thành Phông và CN Huỳnh Quốc Trọng.</div>
+
+  <section class="panel">
+    <h2>DANH SÁCH TỔNG</h2>
+    <div class="tablewrap">
+      <table class="table" id="peopleTable">
+        <thead><tr>
+          <th>STT</th><th>Ban</th><th>Cấp bậc</th><th>Họ và tên</th>
+          <th>Hội thao</th><th>Phép</th><th>Viện</th><th>Công tác</th>
+          <th>Nghỉ tranh thủ</th><th>Mới gác hôm trước</th><th>TB cổng/TB phó</th><th>Lịch lái xe ngày hôm sau</th><th class="no-print">Xóa</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel result" id="resultPanel">
+    <h2>DANH SÁCH PHÂN CÔNG GÁC</h2>
+    <div class="datehead" id="resultDate"></div>
+    <div class="tablewrap">
+      <table class="table">
+        <thead><tr><th>Ca gác</th><th>Họ tên người gác</th><th>Cấp bậc</th><th>Ban</th><th>Ghi chú</th><th class="no-print">Nghỉ gác<br>lý do đột xuất</th></tr></thead>
+        <tbody id="resultBody"></tbody>
+      </table>
+    </div>
+    <div class="actionrow no-print"><button class="danger" onclick="recut()">CẮT GÁC LẠI</button></div>
+  </section>
+
+  <section class="panel">
+    <h2>QUY LUẬT VÀ NGUYÊN TẮC PHÂN CÔNG GÁC</h2>
+    <div class="rules">
+      <div>• Ưu tiên người <strong>chưa gác trong 5 ngày</strong>, sau đó lần lượt 4, 3, 2, 1 ngày.</div>
+      <div>• Nếu thiếu người, có thể bố trí 1 đồng chí <strong>gác 2 ca không liên tiếp</strong> trong cùng ngày.</div>
+      <div>• Hội thao: chỉ ca đầu hoặc ca cuối. Lái xe ngày hôm sau: chỉ ca 1–4.</div>
+      <div>• Phép, Viện, Công tác: không cắt gác.</div>
+      <div>• Đồng chí được đánh dấu <strong>TB cổng/TB phó</strong>: không cắt gác.</div>
+      <div>• Nghỉ tranh thủ: thứ 6 chỉ cắt Ca 1–3; tuyệt đối không Ca 4–7. Thứ 7 không cắt ca nào. Chủ nhật không Ca 1–4 và ưu tiên nhóm này ở Ca 5–7.</div>
+      <div>• Không để một người gác ca 6 hoặc 7 liên tục hai ngày; hạn chế gác 3 ngày liên tục.</div>
+      <div>• Cắt xen kẽ quân số giữa các Ban; Ban Hành chính có quân số lớn nên được phân nhiều ca hơn tương đối.</div>
+      <div>• Có thể đánh dấu nghỉ gác đột xuất sau khi đã cắt và bấm <strong>CẮT GÁC LẠI</strong> để bổ sung.</div>
+      <div class="status" id="dbStatus">Dữ liệu chính được lưu trên MongoDB. Trình duyệt chỉ giữ bản sao dự phòng.</div>
+    </div>
+  </section>
+<section class="panel" id="adminUsersPanel" style="display:none"><h2>DANH SÁCH TÀI KHOẢN</h2><div class="tablewrap"><table class="table"><thead><tr><th>Họ và tên</th><th>Tài khoản</th><th>Quyền</th><th>Ngày tạo</th><th>Đăng nhập gần nhất</th><th>IP</th><th>Vị trí</th><th>Số lần</th></tr></thead><tbody id="adminUsersBody"></tbody></table></div></section>
+<section class="panel" id="historyPanel" style="display:none">
+    <h2>LỊCH SỬ CẮT GÁC 5 NGÀY GẦN NHẤT</h2>
+    <div class="tablewrap"><table class="table"><thead><tr><th>Ngày</th><th>Số ca</th><th>Danh sách</th><th>Xem</th><th class="no-print" id="historyEditHeader" style="display:none">Sửa tên</th><th class="no-print">Xóa</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+    <div id="historyNameEditor" class="panel no-print" style="display:none; margin-top:16px">
+      <h3 id="historyNameEditorTitle">SỬA TÊN NGƯỜI GÁC TRONG LỊCH SỬ</h3>
+      <div id="historyNameEditorFields"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="primary" id="historyNameSaveBtn" onclick="saveEditedHistoryNames()">LƯU THAY ĐỔI</button>
+        <button class="secondary" onclick="closeHistoryNameEditor()">HỦY</button>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="modal" id="personModal">
+ <div class="modalbox">
+  <h3>THÊM QUÂN NHÂN</h3>
+  <label>Ban</label><input id="mBan" placeholder="Ví dụ: Ban Hành chính">
+  <label>Cấp bậc</label><input id="mRank" placeholder="Ví dụ: 2/">
+  <label>Họ và tên</label><input id="mName" placeholder="Họ và tên">
+  <div class="modal-actions"><button class="secondary" onclick="closeModal()">Hủy</button><button class="primary" onclick="confirmAdd()">Thêm</button></div>
+ </div>
+</div>
+
+<script>
+const KEY="catgac_v2_data_backup";
+const HIST="catgac_v2_history_backup";
+let people=[
+ {ban:"Ban Công binh",rank:"2//",name:"Vũ Đại Thắng"},
+ {ban:"Ban Công binh",rank:"1//",name:"Hà Duy Dũng"},
+ {ban:"Ban Công binh",rank:"4/",name:"Huỳnh Ngọc Tuyển"},
+ {ban:"Ban Pháo binh",rank:"2//",name:"Đoàn Thanh Việt"},
+ {ban:"Ban Pháo binh",rank:"1/",name:"Huỳnh Tố Huy"},
+ {ban:"Ban Pháo binh",rank:"2//",name:"Nguyễn Đức Hưng"},
+ {ban:"Ban Pháo binh",rank:"2//",name:"Đặng Thành Vương"},
+ {ban:"Ban Trinh sát",rank:"2//",name:"Võ Văn Lâm"},
+ {ban:"Ban Phòng Không",rank:"2//",name:"Phan Vũ Nam"},
+ {ban:"Ban Phòng Không",rank:"1/",name:"Lê Trung Kiều"},
+ {ban:"Ban Phòng Không",rank:"2//",name:"Nguyễn Duy Sơn"},
+ {ban:"Ban Phòng Không",rank:"1/",name:"Lê Thanh Tuấn"},
+ {ban:"Ban Hành chính",rank:"2//",name:"Lê Thắng Tân"},
+ {ban:"Ban Hành chính",rank:"1// CN",name:"Phạm Tấn Danh"},
+ {ban:"Ban Hành chính",rank:"1// CN",name:"Võ Út"},
+ {ban:"Ban Hành chính",rank:"2/ CN",name:"Đinh Thành Phông"},
+ {ban:"Ban Hành chính",rank:"2/ CN",name:"Huỳnh Quốc Trọng"},
+ {ban:"Ban Hành chính",rank:"3/ CN",name:"Trần Vũ Bảo Duy"},
+ {ban:"Ban Hành chính",rank:"1// CN",name:"Huỳnh Hải Nam"}
+];
+let history={};
+let currentResult=[];
+let statuses={};
+let dbReady=false;
+
+async function api(url, options={}){
+  const r=await fetch(url,{headers:{"Content-Type":"application/json",...(options.headers||{})},...options});
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(data.error||`HTTP ${r.status}`);
+  return data;
+}
+
+async function initFromMongo(){
+  try{
+    const [state,hist]=await Promise.all([api('/api/data'),api('/api/history?limit=5')]);
+    if(state){people=state.people||people;statuses=state.statuses||{};}
+    history={};(hist||[]).forEach(x=>history[x.date]=x.assignments||[]);
+    localStorage.setItem(KEY,JSON.stringify({people,statuses}));
+    localStorage.setItem(HIST,JSON.stringify(history));
+    dbReady=true;
+    document.getElementById('dbStatus').textContent='Đã kết nối MongoDB: lịch sử và Danh sách Tổng được đồng bộ trên máy chủ.';
+    renderPeople();
+    renderHistoryList(hist||[]);
+  }catch(e){
+    dbReady=false;
+    const x=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(x){people=x.people||people;statuses=x.statuses||{};}
+    history=JSON.parse(localStorage.getItem(HIST)||'{}');
+    document.getElementById('dbStatus').textContent='Chưa kết nối được MongoDB. Đang dùng dữ liệu dự phòng trên trình duyệt: '+e.message;
+    renderPeople();
+  }
+}
+
+async function saveToMongo(){
+  await api('/api/data',{method:'POST',body:JSON.stringify({people,statuses})});
+  localStorage.setItem(KEY,JSON.stringify({people,statuses}));
+}
+
+async function saveHistoryToMongo(date){
+  const assignments=currentResult.map(x=>({name:x.name,rank:x.rank,ban:x.ban,slot:x.slot}));
+  await api('/api/history',{method:'POST',body:JSON.stringify({date,assignments,peopleSnapshot:people,statusesSnapshot:statuses})});
+  history[date]=assignments.map(x=>({name:x.name,slot:x.slot,rank:x.rank,ban:x.ban}));
+  localStorage.setItem(HIST,JSON.stringify(history));
+}
+
+async function login(){
+ const user=document.getElementById("user").value.trim();
+ const pass=document.getElementById("pass").value;
+ const msg=document.getElementById("loginmsg");
+ msg.textContent="";
+ try{
+   const auth=await api('/api/auth',{method:'POST',body:JSON.stringify({username:user,password:pass})});
+   window.currentRole=auth.role; window.currentUsername=auth.username;
+   document.getElementById("login").style.display="none";
+   document.getElementById('adminUsersBtn').style.display=auth.role==='admin'?'inline-block':'none';
+   document.getElementById("app").style.display="block";
+   await initFromMongo();
+ }catch(e){
+   msg.textContent=e.message||"Sai tên đăng nhập hoặc mật khẩu.";
+ }
+}
+function showRegister(){
+ document.getElementById('loginView').style.display='none';
+ document.getElementById('registerbox').style.display='block';
+ document.getElementById('loginmsg').textContent='';
+ document.getElementById('regmsg').textContent='';
+ document.getElementById('regname').focus();
+}
+function hideRegister(){
+ document.getElementById('registerbox').style.display='none';
+ document.getElementById('loginView').style.display='block';
+ document.getElementById('regmsg').textContent='';
+}
+async function registerUser(){
+ const name=document.getElementById('regname').value.trim(),u=document.getElementById('reguser').value.trim(),p=document.getElementById('regpass').value,p2=document.getElementById('regpass2').value,msg=document.getElementById('regmsg');
+ msg.style.color='#b51f2a'; msg.textContent='';
+ if(!name){msg.textContent='Vui lòng nhập Họ và tên.';return;}
+ if(name.length>100){msg.textContent='Họ và tên không được vượt quá 100 ký tự.';return;}
+ if(p!==p2){msg.textContent='Mật khẩu nhập lại không khớp.';return;}
+ try{
+   await api('/api/register',{method:'POST',body:JSON.stringify({fullName:name,username:u,password:p})});
+   document.getElementById('user').value=u;
+   document.getElementById('pass').value='';
+   document.getElementById('regname').value='';
+   document.getElementById('reguser').value='';
+   document.getElementById('regpass').value='';
+   document.getElementById('regpass2').value='';
+   document.getElementById('registerbox').style.display='none';
+   document.getElementById('loginView').style.display='block';
+   document.getElementById('loginmsg').style.color='#18733b';
+   document.getElementById('loginmsg').textContent='Đăng ký thành công! Vui lòng nhập mật khẩu để đăng nhập.';
+ }catch(e){msg.textContent=e.message;}
+}
+async function showAdminUsers(){
+ document.getElementById('adminUsersPanel').style.display='block';
+ try{const rows=await api('/api/admin-users');const tb=document.getElementById('adminUsersBody');tb.innerHTML='';rows.forEach(x=>{const loc=x.lastLocation||{};const place=[loc.city,loc.region,loc.country].filter(Boolean).join(', ')||'Không xác định';const tr=document.createElement('tr');tr.innerHTML=`<td>${esc(x.fullName||'—')}</td><td>${esc(x.username)}</td><td>${x.role==='admin'?'QUẢN TRỊ':'NGƯỜI DÙNG'}</td><td>${fmtDateTime(x.createdAt)}</td><td>${fmtDateTime(x.lastLoginAt)}</td><td>${esc(x.lastIp||'Không xác định')}</td><td>${esc(place)}</td><td>${x.loginCount||0}</td>`;tb.appendChild(tr);});}
+ catch(e){alert(e.message);}
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function fmtDateTime(v){if(!v)return '—';try{return new Date(v).toLocaleString('vi-VN');}catch(e){return '—';}}
+
+async function restoreSession(){
+ try{const a=await api('/api/auth');if(a.loggedIn){window.currentRole=a.role;window.currentUsername=a.username;document.getElementById('login').style.display='none';document.getElementById('adminUsersBtn').style.display=a.role==='admin'?'inline-block':'none';document.getElementById('app').style.display='block';await initFromMongo();}}
+ catch(e){console.warn('Không khôi phục được phiên:',e);}
+}
+restoreSession();
+
+document.getElementById("pass").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+async function logout(){try{await api('/api/auth',{method:'DELETE'});}catch(e){} location.reload()}
+function today(){return new Date().toISOString().slice(0,10)}
+document.getElementById("workDate").value=today();
+
+function renderPeople(){
+ const tb=document.querySelector("#peopleTable tbody");tb.innerHTML="";
+ people.forEach((p,i)=>{
+  const s=statuses[i]||{};
+  const drive=["Đinh Thành Phông","Huỳnh Quốc Trọng"].includes(p.name);
+  const row=document.createElement("tr");
+  row.innerHTML=`<td>${i+1}</td><td class="ban">${esc(p.ban)}</td><td class="rank">${esc(p.rank)}</td><td class="name">${esc(p.name)}</td>
+  ${check(i,"hoi","Hội thao",s.hoi)}${check(i,"phep","Phép",s.phep)}${check(i,"vien","Viện",s.vien)}${check(i,"ct","Công tác",s.ct)}
+  ${check(i,"nt","Nghỉ tranh thủ",s.nt)}${check(i,"moi","Mới gác hôm trước",s.moi)}${check(i,"tbCong","TB cổng/TB phó",s.tbCong)}
+  ${drive?check(i,"drive","Có lịch Lái xe<br>ngày hôm sau",s.drive):"<td>—</td>"}
+  <td class="no-print"><button class="danger" style="padding:5px 8px" onclick="removePerson(${i})">X</button></td>`;
+  tb.appendChild(row);
+ });
+}
+function check(i,k,label,val){return `<td><div class="smallcheck"><label><input type="checkbox" ${val?"checked":""} onchange="setStatus(${i},'${k}',this.checked)"> ${label}</label></div></td>`}
+async function setStatus(i,k,v){statuses[i] ||= {};statuses[i][k]=v;try{await saveToMongo();document.getElementById('dbStatus').textContent='Đã đồng bộ thay đổi lên MongoDB.';}catch(e){document.getElementById('dbStatus').textContent='Chưa đồng bộ được: '+e.message;}}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+
+function addPerson(){document.getElementById("personModal").style.display="flex"}
+function closeModal(){document.getElementById("personModal").style.display="none"}
+async function confirmAdd(){
+ const ban=document.getElementById("mBan").value.trim(),rank=document.getElementById("mRank").value.trim(),name=document.getElementById("mName").value.trim();
+ if(!ban||!rank||!name)return alert("Vui lòng nhập đủ Ban, Cấp bậc và Họ tên.");
+ people.push({ban,rank,name});closeModal();renderPeople();await persistState();
+}
+async function removePerson(i){
+ if(confirm("Xóa đồng chí "+people[i].name+" khỏi Danh sách Tổng?")){people.splice(i,1);statuses={};renderPeople();await persistState();}
+}
+async function persistState(){
+ localStorage.setItem(KEY,JSON.stringify({people,statuses}));
+ try{await saveToMongo();alert("Đã lưu dữ liệu lên MongoDB.");}catch(e){alert("Chưa lưu được MongoDB: "+e.message);}
+}
+async function saveData(msg=true){
+ localStorage.setItem(KEY,JSON.stringify({people,statuses}));localStorage.setItem(HIST,JSON.stringify(history));
+ try{await saveToMongo();if(msg)alert("Đã lưu Danh sách Tổng lên MongoDB.");}
+ catch(e){if(msg)alert("Chưa kết nối MongoDB: "+e.message);}
+}
+async function loadData(){await initFromMongo();alert(dbReady?"Đã nạp dữ liệu từ MongoDB.":"MongoDB chưa sẵn sàng; đã nạp dữ liệu dự phòng.")}
+
+function getHist(date){return history[date]||[]}
+function daysAgo(date,n){let d=new Date(date+"T12:00:00");d.setDate(d.getDate()-n);return d.toISOString().slice(0,10)}
+function hadGuard(p,date){
+ return getHist(date).some(x=>x.name===p.name)
+}
+function streak(p,date){
+ let n=0;for(let i=1;i<=30;i++){if(hadGuard(p,daysAgo(date,i)))n++;else break}return n;
+}
+function lastDays(p,date){
+ for(let n=1;n<=5;n++)if(hadGuard(p,daysAgo(date,n)))return n;return 6;
+}
+function isUnavailable(i){
+ const s=statuses[i]||{};return s.phep||s.vien||s.ct||s.tbCong;
+}
+function friday(date){return new Date(date+"T12:00:00").getDay()===5}
+function saturday(date){return new Date(date+"T12:00:00").getDay()===6}
+function sunday(date){return new Date(date+"T12:00:00").getDay()===0}
+
+function eligibleForSlot(i,slot,date,chosen){
+ const p=people[i],s=statuses[i]||{};
+ if(isUnavailable(i))return false;
+ if(chosen.some(x=>x.idx===i && Math.abs(x.slot-slot)<=1))return false; // không 2 ca liên tiếp
+ if(s.moi)return false; // mới gác hôm trước
+ if(s.hoi && slot!==1 && slot!==7)return false;
+ if(s.drive && slot>4)return false;
+ if(s.nt){
+   if(saturday(date))return false;
+   if(friday(date) && slot>=4)return false; // Thứ 6 chỉ Ca 1-3
+   if(sunday(date) && slot<=4)return false; // Chủ nhật chỉ có thể Ca 5-7
+ }
+ // không ca 6/7 liên tục 2 ngày
+ const yesterday=getHist(daysAgo(date,1));
+ if((slot===6||slot===7) && yesterday.some(x=>x.name===p.name && (x.slot===6||x.slot===7)))return false;
+ return true;
+}
+function score(i,slot,date,chosen){
+ const p=people[i],s=statuses[i]||{};
+ let score=0, gap=lastDays(p,date);
+ score += gap*100;
+ if(s.hoi)score+=25;
+ if(s.drive)score+=12;
+ if(s.nt)score+=8;
+ if(sunday(date) && slot>=5 && s.nt)score+=10000; // Chủ nhật ưu tiên NT trước
+ if(s.moi)score-=1000;
+ const st=streak(p,date);
+ score -= st*80;
+ if(chosen.some(x=>x.ban===p.ban))score-=25; // khuyến khích xen ban
+ if(chosen.length && chosen[chosen.length-1].ban===p.ban)score-=80;
+ // Ban Hành chính đông quân số: légère priorité, sans monopoliser
+ if(p.ban==="Ban Hành chính")score+=8;
+ // luân phiên tên
+ const recent=history[date]; if(recent&&recent.some(x=>x.name===p.name))score-=50;
+ return score;
+}
+function pick(slot,date,chosen,allowRepeat){
+ let candidates=[];
+ for(let i=0;i<people.length;i++){
+  if(!eligibleForSlot(i,slot,date,chosen))continue;
+  if(!allowRepeat && chosen.some(x=>x.idx===i))continue;
+  candidates.push(i);
+ }
+ candidates.sort((a,b)=>score(b,slot,date,chosen)-score(a,slot,date,chosen));
+ return candidates[0]??null;
+}
+function cutGuard(){
+ const date=document.getElementById("workDate").value||today();
+ currentResult=[];
+ // trạng thái mới gác hôm trước chỉ là chỉ dẫn trong ngày hiện tại
+ for(let slot=1;slot<=7;slot++){
+   let idx=pick(slot,date,currentResult,false);
+   if(idx===null)idx=pick(slot,date,currentResult,true);
+   if(idx!==null)currentResult.push({slot,idx,name:people[idx].name,rank:people[idx].rank,ban:people[idx].ban});
+ }
+ // nếu chưa đủ 7, thử nới điều kiện tối thiểu nhưng vẫn giữ bất khả xâm phạm phép/viện/công tác
+ if(currentResult.length<7){
+  for(let slot=currentResult.length+1;slot<=7;slot++){
+   let idx=pick(slot,date,currentResult,true);
+   if(idx!==null)currentResult.push({slot,idx,name:people[idx].name,rank:people[idx].rank,ban:people[idx].ban});
+  }
+ }
+ showResult(date);
+}
+function noteFor(item,date){
+ const p=people[item.idx],st=streak(p,date),y=hadGuard(p,daysAgo(date,1));
+ if(st>=2)return "Gác "+(st+1)+" ngày liên tục";
+ if(y)return "Gác 2 ngày liên tục";
+ return "";
+}
+function showResult(date){
+ const panel=document.getElementById("resultPanel");panel.style.display="block";
+ document.getElementById("resultDate").textContent=formatDate(date);
+ const tb=document.getElementById("resultBody");tb.innerHTML="";
+ currentResult.forEach((x,n)=>{
+  const tr=document.createElement("tr");tr.id="res-"+n;
+  tr.innerHTML=`<td>Ca ${x.slot}</td><td class="name">${esc(x.name)}</td><td>${esc(x.rank)}</td><td>${esc(x.ban)}</td><td class="note">${noteFor(x,date)}</td><td class="absent no-print"><input type="checkbox" onchange="markAbsent(${n},this.checked)" title="Nghỉ gác lý do đột xuất"></td>`;
+  tb.appendChild(tr);
+ });
+ if(currentResult.length<7)alert("Chưa đủ 7 đồng chí thỏa mãn toàn bộ điều kiện hiện tại. Anh có thể kiểm tra trạng thái hoặc bổ sung quân số.");
+ else saveHistoryToMongo(date).then(()=>renderHistoryList()).catch(e=>{alert("Đã cắt gác nhưng chưa lưu được lịch sử lên MongoDB: "+e.message);});
+}
+function markAbsent(n,v){currentResult[n].absent=v;document.getElementById("res-"+n).style.opacity=v?".45":"1"}
+function recut(){
+ const date=document.getElementById("workDate").value||today();
+ const absent=currentResult.filter(x=>x.absent);
+ if(!absent.length)return alert("Chưa đánh dấu đồng chí nào nghỉ gác lý do đột xuất.");
+ // temporarily exclude absent from candidate pool
+ const blocked=new Set(absent.map(x=>x.idx));
+ const old=people.map((p,i)=>[i,p]);
+ const replacements=[];
+ for(const a of absent){
+   let candidates=[];
+   for(let i=0;i<people.length;i++){
+    if(blocked.has(i)||isUnavailable(i))continue;
+    if(currentResult.some(x=>!x.absent&&x.idx===i))continue;
+    if(!eligibleForSlot(i,a.slot,date,currentResult.filter(x=>!x.absent)))continue;
+    candidates.push(i);
+   }
+   candidates.sort((u,v)=>score(v,a.slot,date,currentResult.filter(x=>!x.absent))-score(u,a.slot,date,currentResult.filter(x=>!x.absent)));
+   if(candidates.length) {
+    const idx=candidates[0];blocked.add(idx);
+    replacements.push({slot:a.slot,idx,name:people[idx].name,rank:people[idx].rank,ban:people[idx].ban});
+   }
+ }
+ currentResult=currentResult.filter(x=>!x.absent).concat(replacements).sort((a,b)=>a.slot-b.slot);
+ saveHistoryToMongo(date).catch(e=>alert("Chưa lưu lịch sử sau khi cắt lại: "+e.message));
+ showResult(date);
+ if(replacements.length<absent.length)alert("Một số vị trí chưa tìm được người thay thế thỏa mãn các điều kiện.");
+}
+async function showHistory(){
+ document.getElementById('historyPanel').style.display='block';
+ try{const hist=await api('/api/history?limit=5');hist.forEach(x=>history[x.date]=x.assignments||[]);renderHistoryList(hist);}
+ catch(e){renderHistoryList(Object.keys(history).sort().reverse().slice(0,5).map(date=>({date,assignments:history[date]||[]})));}
+}
+function renderHistoryList(items){
+ const arr=items || Object.keys(history).sort().reverse().slice(0,5).map(date=>({date,assignments:history[date]||[]}));
+ const tb=document.getElementById('historyBody');if(!tb)return;tb.innerHTML='';
+ const editHeader=document.getElementById('historyEditHeader');if(editHeader)editHeader.style.display=window.currentRole==='admin'?'':'none';
+ arr.forEach(x=>{
+  const names=(x.assignments||[]).sort((a,b)=>(a.slot||0)-(b.slot||0)).map(a=>`Ca ${a.slot}: ${esc(a.name)}`).join('<br>');
+  const tr=document.createElement('tr');const edit=window.currentRole==='admin'?`<td class="no-print"><button class="secondary" style="padding:5px 8px" onclick="editHistoryNames('${x.date}')">SỬA TÊN</button></td>`:'';const del=window.currentRole==='admin'?`<td class="no-print"><button class="danger" style="padding:5px 8px" onclick="deleteHistory('${x.date}')">XÓA</button></td>`:`<td class="no-print">—</td>`;tr.innerHTML=`<td>${formatDate(x.date)}</td><td>${(x.assignments||[]).length}</td><td style="text-align:left">${names||'—'}</td><td><button class="secondary" onclick="loadHistoryDate('${x.date}')">XEM</button></td>${edit}${del}`;tb.appendChild(tr);
+ });
+}
+let editingHistoryDate=null;
+function closeHistoryNameEditor(){
+ editingHistoryDate=null;
+ document.getElementById('historyNameEditor').style.display='none';
+ document.getElementById('historyNameEditorFields').replaceChildren();
+}
+async function editHistoryNames(date){
+ if(window.currentRole!=='admin')return;
+ try{
+  // Luôn lấy dữ liệu mới từ máy chủ, không dùng bản dự phòng để sửa.
+  const docs=await api('/api/history?limit=30');
+  const record=docs.find(x=>x.date===date);
+  if(!record)throw new Error('Không tìm thấy lịch sử ngày này trên máy chủ.');
+  editingHistoryDate=date;
+  const fields=document.getElementById('historyNameEditorFields');fields.replaceChildren();
+  (record.assignments||[]).forEach((a,i)=>{
+   const row=document.createElement('div');row.style.marginBottom='10px';
+   const label=document.createElement('label');label.textContent='Ca '+a.slot+' — Tên người gác';
+   const input=document.createElement('input');input.type='text';input.value=a.name||'';
+   input.maxLength=120;input.required=true;input.dataset.slot=String(a.slot);
+   row.append(label,input);fields.appendChild(row);
+  });
+  document.getElementById('historyNameEditorTitle').textContent='SỬA TÊN NGƯỜI GÁC — '+formatDate(date);
+  document.getElementById('historyNameEditor').style.display='block';
+  document.getElementById('historyNameEditor').scrollIntoView({behavior:'smooth',block:'start'});
+ }catch(e){alert('Không mở được lịch sử để sửa: '+e.message);}
+}
+async function saveEditedHistoryNames(){
+ if(window.currentRole!=='admin'||!editingHistoryDate)return;
+ const date=editingHistoryDate;
+ const changes=[...document.querySelectorAll('#historyNameEditorFields input[data-slot]')].map(el=>({slot:Number(el.dataset.slot),name:el.value.trim()}));
+ if(!changes.length||changes.some(x=>!x.name)){alert('Tên người gác không được để trống.');return;}
+ const btn=document.getElementById('historyNameSaveBtn');btn.disabled=true;
+ try{
+  const result=await api('/api/history',{method:'PATCH',body:JSON.stringify({date,changes})});
+  history[date]=result.assignments;
+  localStorage.setItem(HIST,JSON.stringify(history));
+  closeHistoryNameEditor();
+  const docs=await api('/api/history?limit=5');renderHistoryList(docs);
+  document.getElementById('dbStatus').textContent='Đã lưu tên người gác trong lịch sử ngày '+formatDate(date)+' lên MongoDB.';
+  alert('Đã lưu thay đổi tên người gác vào lịch sử.');
+ }catch(e){alert('Không lưu được thay đổi: '+e.message);}
+ finally{btn.disabled=false;}
+}
+async function deleteHistory(date){
+ if(!confirm("Xóa lịch sử cắt gác ngày "+formatDate(date)+"?\n\nDữ liệu của ngày này sẽ bị xóa khỏi MongoDB và không thể khôi phục bằng nút hoàn tác.")) return;
+ try{
+   await api('/api/history?date='+encodeURIComponent(date),{method:'DELETE'});
+   delete history[date];
+   localStorage.setItem(HIST,JSON.stringify(history));
+   const hist=await api('/api/history?limit=5');
+   hist.forEach(x=>history[x.date]=x.assignments||[]);
+   renderHistoryList(hist);
+   document.getElementById('dbStatus').textContent='Đã xóa lịch sử ngày '+formatDate(date)+' khỏi MongoDB.';
+   alert('Đã xóa lịch sử cắt gác ngày '+formatDate(date)+'.');
+ }catch(e){
+   alert('Không xóa được lịch sử: '+e.message);
+ }
+}
+
+async function loadHistoryDate(date){
+ let data;try{const arr=await api('/api/history?limit=30');data=arr.find(x=>x.date===date);}catch(e){}
+ if(!data)data={date,assignments:history[date]||[]};
+ currentResult=(data.assignments||[]).map(x=>({slot:x.slot,name:x.name,rank:x.rank||'',ban:x.ban||'',idx:people.findIndex(p=>p.name===x.name)}));
+ showResult(date);window.scrollTo({top:document.getElementById('resultPanel').offsetTop-10,behavior:'smooth'});
+}
+
+function formatDate(d){
+ const dt=new Date(d+"T12:00:00"),days=["Chủ nhật","Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7"];
+ return `${days[dt.getDay()]} ngày ${String(dt.getDate()).padStart(2,"0")} tháng ${String(dt.getMonth()+1).padStart(2,"0")} năm ${dt.getFullYear()}`;
+}
+function printResult(){if(!currentResult.length)return alert("Hãy bấm CẮT GÁC trước.");window.print()}
+
+</script>
+<!-- PWA: cập nhật manifest/icon theo LOGO_URL và đăng ký service worker -->
+<script>
+(function(){
+  try {
+    // Tạo manifest động để logo anh dán ở LOGO_URL cũng được dùng khi cài app.
+    const manifest = {
+      name: APP_NAME,
+      short_name: APP_SHORT_NAME,
+      start_url: "./",
+      display: "standalone",
+      background_color: "#f2f4ed",
+      theme_color: "#355e3b",
+      description: "Ứng dụng phân công cắt gác hằng ngày - Phòng Tham mưu.",
+      icons: [
+        {src: LOGO_URL, sizes: "192x192", type: "image/png", purpose: "any maskable"},
+        {src: LOGO_URL, sizes: "512x512", type: "image/png", purpose: "any maskable"}
+      ]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+    const dynamicManifest = URL.createObjectURL(blob);
+    const manifestLink = document.querySelector('link[rel="manifest"]');
+    if(manifestLink) manifestLink.href = dynamicManifest;
+  } catch(e) { console.warn('Không tạo được manifest động:', e); }
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('./sw.js').catch(function(err){
+        console.warn('PWA service worker chưa đăng ký:', err);
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>
