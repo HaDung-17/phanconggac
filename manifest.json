@@ -1,0 +1,23 @@
+{
+  "name": "PHÒNG THAM MƯU - CẮT GÁC",
+  "short_name": "CẮT GÁC",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f2f4ed",
+  "theme_color": "#355e3b",
+  "description": "Ứng dụng phân công cắt gác hằng ngày - Phòng Tham mưu.",
+  "icons": [
+    {
+      "src": "https://YOUR-DOMAIN.COM/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://YOUR-DOMAIN.COM/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
